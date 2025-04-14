@@ -1,19 +1,34 @@
-
-import React from 'react'
+import React, { useState } from 'react'
 import { Outlet } from 'react-router'
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/Sidebar'
+import { Navbar } from '../components/Navbar'
 
 const DashLayout = () => {
-  return (
-    <div>
-      <Sidebar/>
-      
-        <div className='ml-60 flex flex-col gap-y-4'>
-            <Outlet/>
-        </div>
-    </div>
+  const [activeTab, setActiveTab] = useState('Dashboard')
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
+  const toggleSidebar = () => setIsSidebarOpen(prev => !prev)
+  // const closeSidebar = () => setIsSidebarOpen(false)
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        setActiveTab={setActiveTab}
+        onClose={() => setIsSidebarOpen(false)} // Close the sidebar when a link is clicked
+      />
+
+      {/* Main content */}
+      <div className="flex-1 bg-gray-50">
+      <Navbar activeTab={activeTab} toggleSidebar={toggleSidebar} />
+
+        <main className="p-4">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   )
 }
 
-export default DashLayout;
+export default DashLayout

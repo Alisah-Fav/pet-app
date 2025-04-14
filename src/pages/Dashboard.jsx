@@ -1,8 +1,12 @@
 import React from 'react'
+import SummaryCard from '../components/SummaryCard'
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div className='p-6'>
+      <SummaryCard/>
+    </div>
+    
   )
 }
 
