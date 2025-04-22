@@ -1,8 +1,11 @@
 import React from 'react'
+import TransactionForm from '../components/TransactionForm'
 
 const AddTransaction = () => {
   return (
-    <div>AddTransaction</div>
+    <div>
+      <TransactionForm/>
+    </div>
   )
 }
 

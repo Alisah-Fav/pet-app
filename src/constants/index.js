@@ -1,4 +1,4 @@
-import { FileBarChart, Home, Logs, Plus, User, } from 'lucide-react'
+import { FileBarChart, Home, Logs, Plus, User, User2, } from 'lucide-react'
 
 
 export default {
@@ -22,6 +22,11 @@ export default {
             name: "Reports",
             path: "/dashboard/reports",
             icon: FileBarChart
+        },
+        {
+            name: "Profile",
+            path: "/dashboard/profile",
+            icon: User2
         }
     ]
 }

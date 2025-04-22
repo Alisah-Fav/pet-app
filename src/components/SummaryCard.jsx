@@ -1,31 +1,25 @@
-import React from 'react'
-
-const SummaryCard = () => {
-  const summary = {
-    income: 5000,
-    expenses: 2100,
-  }
-  const  balance = summary.income - summary.expenses;
-
+const SummaryCard = ({ income, expenses, balance }) => {
   return (
     <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-       {/* Total Income */}
+      {/* Total Income */}
       <div className='bg-white p-4 rounded shadow'>
         <h3 className='text-gray-600'>Total Income</h3>
-        <p className='text-green-600 font-bold text-xl'>${summary.income}</p>
+        <p className='text-green-600 font-bold text-xl'>${income}</p>
       </div>
-       {/* Total Expenses */}
-       <div className='bg-white p-4 rounded shadow'>
+      
+      {/* Total Expenses */}
+      <div className='bg-white p-4 rounded shadow'>
         <h3 className='text-gray-600'>Total Expenses</h3>
-        <p className='text-green-600 font-bold text-xl'>${summary.expenses}</p>
-       </div>
-       {/* Current Balance */}
-       <div className='bg-white p-4 rounded shadow'>
-        <h3 className='text-gray-600'>Current Balance</h3>
-        <p className='text-green-600 font-bold text-xl'>${balance}</p>
-       </div>
-    </div>
-  )
-}
+        <p className='text-red-600 font-bold text-xl'>${expenses}</p>
+      </div>
 
-export default SummaryCard
+      {/* Current Balance */}
+      <div className='bg-white p-4 rounded shadow'>
+        <h3 className='text-gray-600'>Current Balance</h3>
+        <p className='text-blue-600 font-bold text-xl'>${balance}</p>
+      </div>
+    </div>
+  );
+};
+
+export default SummaryCard;

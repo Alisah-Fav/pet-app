@@ -1,288 +1,201 @@
-// import React, { useState } from 'react';
-// import { Pencil, Trash } from 'lucide-react';
+import React, { useState } from "react";
+import { MoreVertical, Pencil, Trash2, Search } from "lucide-react";
+import { toast } from "react-toastify";
 
-// const dummyTransactions = [
-//   { id: 1, date: '2024-04-21', description: 'Groceries', category: 'Groceries', amount: 50 },
-//   { id: 2, date: '2024-04-20', description: 'Freelance', category: 'Electricity', amount: 1500 },
-// ];
+const TransactionTable = ({ data, onEdit, onDelete, readOnly = false }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editItem, setEditItem] = useState(null);
+  const [deleteItemId, setDeleteItemId] = useState(null);
 
-// const TransactionTable = () => {
-//   const [selectedIds, setSelectedIds] = useState([]);
-//   const [openAccordion, setOpenAccordion] = useState(null);
-//   const [showModal, setShowModal] = useState(false);
-//   const [transactionToDelete, setTransactionToDelete] = useState(null);
+  const filteredData = data.filter((item) =>
+    `${item.description} ${item.category} ${item.date}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
 
-//   const toggleSelect = (id) => {
-//     setSelectedIds((prev) =>
-//       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-//     );
-//   };
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    if (editItem.amount <= 0) {
+      toast.error("Amount must be greater than zero.");
+      return;
+    }
+    onEdit(editItem);
+    toast.success("Transaction updated successfully!");
+    setEditItem(null);
+  };
 
-//   const toggleAccordion = (id) => {
-//     setOpenAccordion((prev) => (prev === id ? null : id)); // Toggle between open/closed
-//   };
+  const handleDelete = () => {
+    onDelete(deleteItemId);
+    toast.success("Transaction deleted successfully!");
+    setDeleteItemId(null);
+  };
 
-//   const handleDelete = (id) => {
-//     setShowModal(false);
-//     alert(`Transaction with ID ${id} deleted!`);
-//   };
-
-//   return (
-//     <div className="p-4 bg-white rounded shadow relative">
-//       {/* Table for larger screens */}
-//       <div className="hidden md:block">
-//         <table className="w-full text-left border-separate border-spacing-y-2">
-//           <thead>
-//             <tr className="text-gray-500 text-sm">
-//               <th>
-//                 <input
-//                   type="checkbox"
-//                   checked={selectedIds.length === dummyTransactions.length}
-//                   onChange={() => {}}
-//                 />
-//               </th>
-//               <th>Date</th>
-//               <th>Description</th>
-//               <th>Category</th>
-//               <th className="text-right">Amount</th>
-//               <th></th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {dummyTransactions.map((tx) => (
-//               <tr key={tx.id} className="group hover:bg-gray-50 transition rounded">
-//                 <td>
-//                   <input
-//                     type="checkbox"
-//                     checked={selectedIds.includes(tx.id)}
-//                     onChange={() => toggleSelect(tx.id)}
-//                   />
-//                 </td>
-//                 <td>{tx.date}</td>
-//                 <td>{tx.description}</td>
-//                 <td>{tx.category}</td>
-//                 <td className="text-red-500 text-right">
-//                   ${tx.amount.toLocaleString()}
-//                 </td>
-//                 <td className="pl-4">
-//                   <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition">
-//                     <button title="Edit">
-//                       <Pencil className="w-4 h-4 text-blue-600" />
-//                     </button>
-//                     <button
-//                       title="Delete"
-//                       onClick={() => {
-//                         setTransactionToDelete(tx.id);
-//                         setShowModal(true);
-//                       }}
-//                     >
-//                       <Trash className="w-4 h-4 text-red-600" />
-//                     </button>
-//                   </div>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-
-//       {/* Accordion for smaller screens */}
-//       <div className="md:hidden space-y-4">
-//         {dummyTransactions.map((tx) => (
-//           <div key={tx.id} className="border rounded p-4 bg-white shadow-sm">
-//             <div
-//               className="flex justify-between cursor-pointer"
-//               onClick={() => toggleAccordion(tx.id)}
-//             >
-//               <div className="font-semibold text-gray-800">{tx.description}</div>
-//               <div className="text-red-500">${tx.amount.toLocaleString()}</div>
-//             </div>
-
-//             {openAccordion === tx.id && (
-//               <div className="mt-2">
-//                 <div className="text-sm text-gray-500">
-//                   <p><strong>Date:</strong> {tx.date}</p>
-//                   <p><strong>Category:</strong> {tx.category}</p>
-//                 </div>
-//                 <div className="mt-2 flex justify-between gap-3">
-//                   <button title="Edit">
-//                     <Pencil className="w-4 h-4 text-blue-600" />
-//                   </button>
-//                   <button
-//                     title="Delete"
-//                     onClick={() => {
-//                       setTransactionToDelete(tx.id);
-//                       setShowModal(true);
-//                     }}
-//                   >
-//                     <Trash className="w-4 h-4 text-red-600" />
-//                   </button>
-//                 </div>
-//               </div>
-//             )}
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Modal */}
-//       {showModal && (
-//         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-6 z-10 w-full max-w-sm">
-//           <p className="mb-4 text-sm text-gray-700">
-//             Are you sure you want to delete this transaction?
-//           </p>
-//           <div className="flex justify-end gap-3">
-//             <button
-//               className="px-3 py-1 border rounded hover:bg-gray-100"
-//               onClick={() => setShowModal(false)}
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-//               onClick={() => handleDelete(transactionToDelete)}
-//             >
-//               Delete
-//             </button>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default TransactionTable;
-
-
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import React from "react";
-
-const TransactionTable = () => {
   return (
-    <div className="p-4 bg-white rounded shadow space-y-4">
-      {/* Table View for medium and Up */}
+    <div className="p-4 bg-white rounded shadow space-y-6">
+      {!readOnly && (
+        <div className="flex items-center gap-2 border rounded px-3 py-2 w-full md:w-1/3">
+          <Search className="w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search transactions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full focus:outline-none text-sm"
+          />
+        </div>
+      )}
+
+      {/* Table View */}
       <div className="hidden md:block">
-        <table className="w-full text-left  border-spacing-y-2">
+        <table className="w-full text-left border-t border-gray-200">
           <thead>
-            <tr className="text-gray-500 text-sm">
-              <th><input type="checkbox" /></th>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Amount</th>
+            <tr className="text-gray-500 text-sm border-b border-gray-200">
+              {!readOnly && <th className="py-2"><input type="checkbox" /></th>}
+              <th className="py-2">Date</th>
+              <th className="py-2">Description</th>
+              <th className="py-2">Category</th>
+              <th className="py-2">Amount</th>
+              {!readOnly && <th className="py-2"></th>}
             </tr>
           </thead>
           <tbody>
-            {/* Row 1 */}
-            <tr className="group hover:bg-gray-50 transition rounded">
-              <td><input type="checkbox" /></td>
-              <td>2024-04-21</td>
-              <td>Groceries</td>
-              <td>Groceries</td>
-              <td className="text-red-500">$50</td>
-              <td>
-                <div className="hidden group-hover:flex gap-3">
-                  <button title="Edit" className="text-blue-600">
-                    <Pencil size={18} />
-                  </button>
-                  <button title="Delete" className="text-red-600">
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-
-            {/* Row 2 */}
-            <tr className="group hover:bg-gray-50 transition rounded">
-              <td><input type="checkbox" /></td>
-              <td>2024-04-20</td>
-              <td>Freelance</td>
-              <td>Electricity</td>
-              <td className="text-red-500">$1500</td>
-              <td className="pl-4">
-                <div className="hidden group-hover:flex gap-3">
-                  <button title="Edit" className="text-blue-600">
-                    <Pencil size={18} />
-                  </button>
-                  <button title="Delete" className="text-red-600">
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </td>
-            </tr>
+            {filteredData.map((item, index) => (
+              <tr key={index} className="group hover:bg-gray-50 transition border-b border-gray-100">
+                {!readOnly && <td className="py-2"><input type="checkbox" /></td>}
+                <td className="py-2">{item.date}</td>
+                <td className="py-2">{item.description}</td>
+                <td className="py-2">{item.category}</td>
+                <td className="py-2 text-red-500">${item.amount}</td>
+                {!readOnly && (
+                  <td className="py-2">
+                    <div className="hidden group-hover:flex gap-3">
+                      <button title="Edit" onClick={() => setEditItem(item)} className="text-teal-400">
+                        <Pencil size={18} />
+                      </button>
+                      <button title="Delete" onClick={() => setDeleteItemId(item.id)} className="text-red-600">
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
-
+      {/* Mobile Cards */}
       <div className="md:hidden space-y-4">
+        {filteredData.map((item, index) => (
+          <div key={index} className="relative border rounded p-4 shadow-sm bg-white group">
+            {!readOnly && (
+              <div className="absolute top-2 right-2">
+                <button className="peer">
+                  <MoreVertical className="w-5 h-5 text-gray-600" />
+                </button>
+                <div className="hidden peer-focus:flex flex-col bg-white border shadow rounded-md p-2 gap-2 absolute right-0 mt-2 z-10">
+                  <button className="flex items-center gap-1 text-teal-400 text-sm" onClick={() => setEditItem(item)}>
+                    <Pencil className="w-4 h-4" /> Edit
+                  </button>
+                  <button className="flex items-center gap-1 text-red-600 text-sm" onClick={() => setDeleteItemId(item.id)}>
+                    <Trash2 className="w-4 h-4" /> Delete
+                  </button>
+                </div>
+              </div>
+            )}
+            <div className="flex justify-between pr-12">
+              <div className="font-semibold text-gray-800">{item.description}</div>
+              <div className="text-red-500 font-medium">${item.amount}</div>
+            </div>
+            <div className="mt-2 text-sm text-gray-500 space-y-1">
+              <p><strong>Date:</strong> {item.date}</p>
+              <p><strong>Category:</strong> {item.category}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
-        <div className="relative border rounded p-4 shadow-sm bg-white group">
-          {/* Dropdown Trigger */}
-          <div className="absolute top-2 right-2">
-            <button className="peer">
-              <MoreVertical className="w-5 h-5 text-gray-600" />
-            </button>
+      {/* Edit Modal */}
+      {!readOnly && editItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-semibold mb-4">Edit Transaction</h2>
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="block">Date</label>
+                <input
+                  type="date"
+                  value={editItem.date}
+                  onChange={(e) => setEditItem({ ...editItem, date: e.target.value })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block">Description</label>
+                <input
+                  type="text"
+                  value={editItem.description}
+                  onChange={(e) => setEditItem({ ...editItem, description: e.target.value })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block">Category</label>
+                <input
+                  type="text"
+                  value={editItem.category}
+                  onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block">Amount</label>
+                <input
+                  type="number"
+                  value={editItem.amount}
+                  onChange={(e) => setEditItem({ ...editItem, amount: parseFloat(e.target.value) })}
+                  className="w-full px-3 py-2 border rounded"
+                  min="any"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setEditItem(null)} className="text-sm px-4 py-2 bg-gray-200 rounded">
+                  Cancel
+                </button>
+                <button type="submit" className="text-sm px-4 py-2 bg-teal-400 text-white rounded">
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-            {/* Dropdown Menu */}
-            <div className="hidden peer-focus:flex flex-col bg-white border shadow rounded-md p-2 gap-2 absolute right-0 mt-2 z-10">
-              <button className="flex items-center gap-1 text-blue-600 text-sm">
-                <Pencil className="w-4 h-4" /> Edit
+      {/* Delete Confirmation Modal */}
+      {!readOnly && deleteItemId !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-sm">
+            <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
+            <p>Are you sure you want to delete this transaction?</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteItemId(null)}
+                className="text-sm px-4 py-2 bg-gray-200 rounded"
+              >
+                Cancel
               </button>
-              <button className="flex items-center gap-1 text-red-600 text-sm">
-                <Trash2 className="w-4 h-4" /> Delete
+              <button
+                onClick={handleDelete}
+                className="text-sm px-4 py-2 bg-red-600 text-white rounded"
+              >
+                Delete
               </button>
             </div>
           </div>
-
-          {/* Content */}
-          <div className="flex justify-between pr-12">
-            <div className="font-semibold text-gray-800">Groceries</div>
-            <div className="text-red-500 font-medium">$50</div>
-          </div>
-          <div className="mt-2 text-sm text-gray-500 space-y-1">
-            <p><strong>Date:</strong> 2024-04-21</p>
-            <p><strong>Category:</strong> Groceries</p>
-          </div>
         </div>
-
-      </div>
-
-      <div className="md:hidden space-y-4">
-
-        <div className="relative border rounded p-4 shadow-sm bg-white group">
-          {/* Dropdown Trigger */}
-          <div className="absolute top-2 right-2">
-            <button className="peer">
-              <MoreVertical className="w-5 h-5 text-gray-600" />
-            </button>
-
-            {/* Dropdown Menu */}
-            <div className="hidden peer-focus:flex flex-col bg-white border shadow rounded-md p-2 gap-2 absolute right-0 mt-2 z-10">
-              <button className="flex items-center gap-1 text-blue-600 text-sm">
-                <Pencil className="w-4 h-4" /> Edit
-              </button>
-              <button className="flex items-center gap-1 text-red-600 text-sm">
-                <Trash2 className="w-4 h-4" /> Delete
-              </button>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="flex justify-between pr-12">
-            <div className="font-semibold text-gray-800">Freelance</div>
-            <div className="text-red-500 font-medium">$1500</div>
-          </div>
-          <div className="mt-2 text-sm text-gray-500 space-y-1">
-            <p><strong>Date:</strong> 2024-04-20</p>
-            <p><strong>Category:</strong> Electricity</p>
-          </div>
-        </div>
-
-      </div>
-
-
+      )}
     </div>
-  )
-}
-export default TransactionTable
+  );
+};
+
+export default TransactionTable;
