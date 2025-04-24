@@ -1,11 +1,15 @@
 // SignInModal.jsx
 import { useState } from 'react';
+import { apiSignIn } from '../services/auth'; // Adjust path as needed
+import { useNavigate } from 'react-router';
 
 export default function SignInModal({ isOpen, onClose, onSignUp }) {
   const [signinData, setSigninData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -15,23 +19,33 @@ export default function SignInModal({ isOpen, onClose, onSignUp }) {
     }));
   };
 
-  const handleSignin = (e) => {
+  const handleSignin = async (e) => {
     e.preventDefault();
     
-    // Here you would send the sign-in data to your backend for authentication
-    console.log("Sign in data:", signinData);
-    
-    // Close the modal after submission
-    onClose();
-    
-    // Reset form
-    setSigninData({
-      email: '',
-      password: ''
-    });
+    try {
+      const response = await apiSignIn(signinData);
+      console.log("Sign in success:", response.data);
+      
+      // Store auth token - adjust the property name based on your API response
+      localStorage.setItem('token', response.data.token || response.data.accessToken);
+      
+      // Navigate to dashboard after successful login
+      navigate('/dashboard');
+      
+      // Reset form and close modal
+      setSigninData({
+        email: '',
+        password: ''
+      });
+      setError('');
+      onClose();
+    } catch (err) {
+      console.error('Sign in error:', err);
+      setError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+    }
   };
-
   if (!isOpen) return null;
+ 
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -72,7 +86,7 @@ export default function SignInModal({ isOpen, onClose, onSignUp }) {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-green-500 focus:ring-green-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-teal-400 focus:ring-green-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                   Remember me
@@ -80,7 +94,7 @@ export default function SignInModal({ isOpen, onClose, onSignUp }) {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-green-600 hover:text-green-500">
+                <a href="#" className="font-medium text-teal-400 hover:text-teal-500">
                   Forgot password?
                 </a>
               </div>
@@ -97,7 +111,7 @@ export default function SignInModal({ isOpen, onClose, onSignUp }) {
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white font-medium px-6 py-2 rounded-md hover:bg-green-600 transition-colors"
+              className="bg-teal-400 text-white font-medium px-6 py-2 rounded-md hover:bg-teal-500 transition-colors"
             >
               Sign In
             </button>
@@ -108,7 +122,7 @@ export default function SignInModal({ isOpen, onClose, onSignUp }) {
               Don't have an account?{" "}
               <button
                 type="button"
-                className="font-medium text-green-600 hover:text-green-500"
+                className="font-medium text-teal-400 hover:text-teal-500"
                 onClick={onSignUp}
               >
                 Sign up now

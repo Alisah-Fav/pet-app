@@ -1,13 +1,18 @@
 // SignUpModal.jsx
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { apiSignUp } from '../services/auth';
 
-export default function SignUpModal({ isOpen, onClose, email }) {
+
+export default function SignUpModal({ isOpen, onClose, email, onSuccess }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     password: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -17,30 +22,47 @@ export default function SignUpModal({ isOpen, onClose, email }) {
     }));
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match");
+      setError("Passwords don't match");
       return;
     }
     
-    // Here you would send the complete form data to your backend
-    console.log("Signup data:", { email, ...formData });
+    // Prepare payload to send to backend
+    const payload = {
+      email,
+      // username: 'username',
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      password: formData.password,
+      confirmPassword: formData.password,
+    };
     
-    // Close the modal after submission
-    onClose();
-    
-    // Reset form
-    setFormData({
-      firstName: '',
-      lastName: '',
-      password: '',
-      confirmPassword: ''
-    });
+    try {
+      const response = await apiSignUp(payload);
+      console.log("Signup success:", response.data);
+      
+    onSuccess()
+      
+      // Reset form and close modal
+      setFormData({
+        firstName: '',
+        lastName: '',
+        password: '',
+        confirmPassword: ''
+      });
+      setError('');
+      onClose();
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError(err.response?.data?.message || 'Something went wrong. Try again.');
+    }
   };
 
   if (!isOpen) return null;
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -116,7 +138,7 @@ export default function SignUpModal({ isOpen, onClose, email }) {
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white font-medium px-6 py-2 rounded-md hover:bg-green-600 transition-colors"
+              className="bg-teal-400 text-white font-medium px-6 py-2 rounded-md hover:bg-teal-500 transition-colors"
             >
               Sign Up
             </button>

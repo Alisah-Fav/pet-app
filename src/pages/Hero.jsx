@@ -84,6 +84,10 @@ export default function CentsibleLoadingHero() {
         isOpen={showSignupModal}
         onClose={() => setShowSignupModal(false)}
         email={email}
+        onSuccess={() => {
+          setShowSignupModal(false)
+          setShowSigninModal(true)
+        }}
       />
 
       <SignInModal

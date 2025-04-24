@@ -37,7 +37,7 @@ export const Navbar = ({ activeTab, toggleSidebar }) => {
         </button>
 
         <h1 className="text-xl font-semibold text-gray-800">
-          Current Tab: {activeTab}
+           {activeTab}
         </h1>
       </div>
 

@@ -18,7 +18,7 @@ function App() {
         <Route path="/" element={<Hero />} />
 
         <Route path="/dashboard" element={<DashLayout />}>
-          <Route index={true} element={<Dashboard />} />
+          <Route index element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="add-transaction" element={<AddTransaction />} />
           <Route path="reports" element={<Reports />} />
