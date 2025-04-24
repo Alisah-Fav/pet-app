@@ -25,7 +25,7 @@ const Piechart = ({ data }) => {
             labelLine={false} // Remove the label lines
             label={false} // Remove the labels from segments
           >
-            {data.map((entry, index) => (
+            {data?.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
@@ -38,7 +38,7 @@ const Piechart = ({ data }) => {
       
       {/* Custom legend below the chart */}
       <div className="mt-4 grid grid-cols-2 gap-2">
-        {data.map((category, index) => (
+        {data?.map((category, index) => (
           <div key={category.name} className="flex items-center">
             <div 
               className="w-3 h-3 rounded-full mr-2" 

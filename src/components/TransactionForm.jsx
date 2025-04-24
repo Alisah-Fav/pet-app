@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { apiAddTransaction } from '../services/transaction';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
+
 
 const TransactionForm = ({ onTransactionAdded }) => {
   const [transaction, setTransaction] = useState({
@@ -12,6 +14,7 @@ const TransactionForm = ({ onTransactionAdded }) => {
     currency: 'GHS', // default
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate(); // For routing after successful transaction
 
   const handleAddTransaction = async () => {
     // Validate form
@@ -49,6 +52,10 @@ const TransactionForm = ({ onTransactionAdded }) => {
       if (onTransactionAdded) {
         onTransactionAdded();
       }
+
+      // Route to /dashboard/transactions after successful transaction
+navigate('/dashboard/transactions');
+      
       
     } catch (error) {
       // Show error feedback

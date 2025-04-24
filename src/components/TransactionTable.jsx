@@ -16,20 +16,20 @@ const TransactionTable = ({
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Debounce search term to avoid excessive API calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500); // Wait 500ms after user stops typing
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setDebouncedSearchTerm(searchTerm);
+  //   }, 500); // Wait 500ms after user stops typing
 
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  //   return () => clearTimeout(timer);
+  // }, [searchTerm]);
 
   // Trigger filter when debounced term changes
-  useEffect(() => {
-    if (onFilter) {
-      onFilter({ search: debouncedSearchTerm });
-    }
-  }, [debouncedSearchTerm, onFilter]);
+  // useEffect(() => {
+  //   if (onFilter) {
+  //     onFilter({ search: debouncedSearchTerm });
+  //   }
+  // }, [debouncedSearchTerm, onFilter]);
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
