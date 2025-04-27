@@ -65,7 +65,7 @@ navigate('/dashboard/transactions');
     }
   };
   
-  const expenseCategories = ['Food', 'Transport', 'Shopping', 'Utilities', 'Entertainment','Rent'];
+  const expenseCategories = ['Food', 'Transport', 'Shopping', 'Utilities', 'Entertainment','Housing', 'Health', 'Gift', 'Miscellaneous'];
   const incomeCategories = ['Salary', 'Bonus', 'Interest', 'Gift', 'Investment'];
 
   const categories = transaction.type === 'expense' ? expenseCategories : incomeCategories;

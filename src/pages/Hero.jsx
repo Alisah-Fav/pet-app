@@ -37,15 +37,15 @@ export default function CentsibleLoadingHero() {
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
       {/* Loading screen */}
-      <BrandLoader
+      <BrandLoader 
         brandName={brandName}
         onLoadingComplete={handleLoadingComplete}
       />
 
       {/* Main content */}
       <div
-        className={`bg-[url('assets/img4.png')] bg-cover bg-center transition-opacity duration-1000 ${showLanding ? 'opacity-100' : 'opacity-0'}`}
-      >
+        className={`bg-[url('assets/img5.png')] bg-cover bg-center transition-opacity duration-1000 ${showLanding ? 'opacity-100' : 'opacity-0'}`}
+ >
         <div className="fixed inset-0 -z-10 bg-black/60"></div>
 
         <header className="fixed top-0 left-0 w-full py-6 px-8 flex justify-between items-center z-30">
@@ -64,10 +64,10 @@ export default function CentsibleLoadingHero() {
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-8 animate-fade-in" style={{ animationDelay: '0.5s' }}>
               Smart money decisions <br />
-              <span className="text-teal-400">for everyone</span>
+              <span className="text-teal-100 ">for everyone</span>
             </h1>
 
-            <p className="text-xl opacity-80 max-w-2xl mx-auto mb-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <p className="text-xl max-w-2xl mx-auto mb-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
               Take control of your financial future with our intelligent budgeting and savings tools.
               Designed to make financial wellness accessible and achievable.
             </p>
@@ -97,7 +97,7 @@ export default function CentsibleLoadingHero() {
       />
 
       {/* About Section with background */}
-      <div className="py-24 relative bg-[url('/img2.png')] bg-cover bg-center">
+      <div className={`bg-[url('assets/img2.png')] bg-cover bg-center transition-opacity duration-1000 ${showLanding ? 'opacity-100' : 'opacity-0'}`}>
         {/* Add an overlay for better text readability */}
         <div className="absolute inset-0 bg-black/30"></div>
         <div className="w-full max-w-6xl mx-auto px-6 animate-fade-in" style={{ animationDelay: '1.4s' }}>
