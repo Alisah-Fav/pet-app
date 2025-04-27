@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MoreVertical, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -6,30 +6,19 @@ const TransactionTable = ({
   data, 
   onEdit, 
   onDelete, 
-  onFilter, 
-  isFiltering = false,
   readOnly = false 
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+
   const [editItem, setEditItem] = useState(null);
   const [deleteItemId, setDeleteItemId] = useState(null);
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-  // Debounce search term to avoid excessive API calls
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setDebouncedSearchTerm(searchTerm);
-  //   }, 500); // Wait 500ms after user stops typing
-
-  //   return () => clearTimeout(timer);
-  // }, [searchTerm]);
-
-  // Trigger filter when debounced term changes
-  // useEffect(() => {
-  //   if (onFilter) {
-  //     onFilter({ search: debouncedSearchTerm });
-  //   }
-  // }, [debouncedSearchTerm, onFilter]);
+  // Filtered data based on search term
+  const filteredData = data.filter((item) =>
+    item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -37,13 +26,12 @@ const TransactionTable = ({
       toast.error("Amount must be greater than zero.");
       return;
     }
-    
     try {
       await onEdit(editItem);
       toast.success("Transaction updated successfully!");
       setEditItem(null);
     } catch (error) {
-      // Error handling is in the parent component
+      // handle error in parent
     }
   };
 
@@ -53,29 +41,27 @@ const TransactionTable = ({
       toast.success("Transaction deleted successfully!");
       setDeleteItemId(null);
     } catch (error) {
-      // Error handling is in the parent component
+      // handle error in parent
     }
   };
 
-  // Format currency display
   const formatCurrency = (amount, currency = "$") => {
     return `${currency}${amount.toFixed(2)}`;
   };
 
   return (
     <div className="p-4 bg-white rounded shadow space-y-6">
-      {!readOnly && (
-        <div className="flex items-center gap-2 border rounded px-3 py-2 w-full md:w-1/3">
-          <Search className="w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search transactions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full focus:outline-none text-sm"
-          />
-        </div>
-      )}
+      {/* Search Input */}
+      <div className="flex items-center gap-2 border rounded px-3 py-2 w-full md:w-1/3">
+        <Search className="w-4 h-4 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search transactions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full focus:outline-none text-sm"
+        />
+      </div>
 
       {/* Table View */}
       <div className="hidden md:block">
@@ -92,7 +78,7 @@ const TransactionTable = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => (
+            {filteredData.map((item, index) => (
               <tr key={item.id || index} className="group hover:bg-gray-50 transition border-b border-gray-100">
                 {!readOnly && <td className="py-2"><input type="checkbox" /></td>}
                 <td className="py-2">{item.date}</td>
@@ -122,7 +108,7 @@ const TransactionTable = ({
 
       {/* Mobile Cards */}
       <div className="md:hidden space-y-4">
-        {data.map((item, index) => (
+        {filteredData.map((item, index) => (
           <div key={item.id || index} className="relative border rounded p-4 shadow-sm bg-white group">
             {!readOnly && (
               <div className="absolute top-2 right-2">
@@ -155,7 +141,7 @@ const TransactionTable = ({
       </div>
 
       {/* Empty State */}
-      {data.length === 0 && (
+      {filteredData.length === 0 && (
         <div className="text-center py-8 text-gray-500">
           {searchTerm ? 
             `No transactions found matching "${searchTerm}"` : 
@@ -165,10 +151,11 @@ const TransactionTable = ({
 
       {/* Edit Modal */}
       {!readOnly && editItem && (
-        <div className="fixed inset-0 bg-black/50 bg-opacity-30 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
             <h2 className="text-lg font-semibold mb-4">Edit Transaction</h2>
             <form onSubmit={handleEditSubmit} className="space-y-4">
+              {/* Form fields */}
               <div className="space-y-2">
                 <label className="block">Date</label>
                 <input
@@ -270,7 +257,7 @@ const TransactionTable = ({
 
       {/* Delete Confirmation Modal */}
       {!readOnly && deleteItemId !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-sm">
             <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
             <p>Are you sure you want to delete this transaction?</p>

@@ -25,6 +25,22 @@ export const apiDashboard = async () => apiClient.get(`/data`);
 export const apiPie = async () => apiClient.get(`/charts/category`);
 export const apiBar = async () => apiClient.get (`/charts/monthly`);
 
+export const apiUser = async () => await apiClient.get("/user/me");
+export const apiUpdate = async (payload) => {
+  console.log(payload);
+  const {id, ...rest} = payload
+   apiClient.put(`/user/${id}`, rest, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+  
+
+
+
+  
+
 
 
 
